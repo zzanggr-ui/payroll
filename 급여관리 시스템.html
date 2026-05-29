@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<!-- saved from url=(0046)file:///C:/Users/user/Downloads/payroll_2.html -->
+<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>급여관리 시스템</title>
+<link href="./급여관리 시스템_files/css2" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh}
+.header{background:#1a1a1a;color:#fff;padding:16px 24px;display:flex;align-items:center;gap:12px}
+.header h1{font-size:18px;font-weight:700;letter-spacing:-0.5px}
+.header span{font-size:12px;opacity:0.5;margin-left:auto}
+.nav{background:#fff;border-bottom:1px solid #e8e8e0;padding:0 24px;display:flex;gap:0}
+.nav button{padding:14px 18px;font-size:13px;font-family:inherit;border:none;background:none;cursor:pointer;color:#888;border-bottom:2px solid transparent;transition:all 0.2s}
+.nav button.active{color:#1a1a1a;border-bottom-color:#1a1a1a;font-weight:500}
+.nav button:hover{color:#1a1a1a}
+.main{max-width:1100px;margin:0 auto;padding:24px}
+.section{display:none}
+.section.active{display:block}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.metric{background:#fff;border-radius:8px;padding:16px;border:1px solid #e8e8e0}
+.metric-label{font-size:12px;color:#888;margin-bottom:6px}
+.metric-value{font-size:22px;font-weight:700;color:#1a1a1a}
+.card{background:#fff;border-radius:8px;padding:20px;margin-bottom:16px;border:1px solid #e8e8e0}
+.card-title{font-size:15px;font-weight:700;margin-bottom:16px;color:#1a1a1a}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+label{font-size:12px;color:#666;display:block;margin-bottom:4px}
+input,select{width:100%;padding:9px 12px;border:1px solid #e0e0d8;border-radius:6px;font-size:13px;font-family:inherit;color:#1a1a1a;background:#fff;margin-bottom:12px;outline:none;transition:border 0.2s}
+input:focus,select:focus{border-color:#1a1a1a}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{padding:9px 18px;border:1px solid #e0e0d8;border-radius:6px;font-size:13px;font-family:inherit;cursor:pointer;background:#fff;color:#1a1a1a;transition:all 0.15s}
+.btn:hover{background:#f5f5f0}
+.btn-primary{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.btn-primary:hover{background:#333}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-danger{color:#c0392b;border-color:#f0c0bb}
+.btn-danger:hover{background:#fff5f4}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 12px;border-bottom:1px solid #e8e8e0;color:#888;font-weight:500;font-size:12px}
+td{padding:10px 12px;border-bottom:1px solid #f0f0e8;color:#1a1a1a}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafaf8}
+.badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-green{background:#e8f5e2;color:#2e7d32}
+.badge-amber{background:#fff8e1;color:#e65100}
+.divider{border:none;border-top:1px solid #f0f0e8;margin:12px 0}
+.slip-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid #f8f8f4}
+.slip-total{display:flex;justify-content:space-between;padding:10px 0;font-size:15px;font-weight:700}
+.alert-info{background:#e8f4fd;border-radius:6px;padding:10px 14px;font-size:12px;color:#1565c0;margin-bottom:14px;line-height:1.6}
+.net-box{background:#1a1a1a;color:#fff;border-radius:8px;padding:16px;text-align:center;margin-top:12px}
+.net-box .label{font-size:12px;opacity:0.6;margin-bottom:4px}
+.net-box .value{font-size:28px;font-weight:700}
+.empty-state{text-align:center;padding:40px;color:#aaa;font-size:14px}
+.slip-paper{max-width:480px;margin:0 auto;background:#fff;border:1px solid #e8e8e0;border-radius:8px;overflow:hidden}
+.slip-header{background:#1a1a1a;color:#fff;text-align:center;padding:24px}
+.slip-header h2{font-size:18px;font-weight:700;margin-bottom:4px}
+.slip-header p{font-size:12px;opacity:0.6}
+.slip-body{padding:20px}
+.slip-section-title{font-size:11px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin:16px 0 8px}
+@media(max-width:600px){.grid2,.form-row{grid-template-columns:1fr}.grid4{grid-template-columns:1fr 1fr}.main{padding:12px}.nav button{padding:12px 10px;font-size:12px}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>💼 급여관리 시스템</h1>
+  <span id="today-date">2026년 5월 29일</span>
+</div>
+<div class="nav">
+  <button class="active" onclick="showTab(&#39;dashboard&#39;)">대시보드</button>
+  <button onclick="showTab(&#39;employees&#39;)">직원 관리</button>
+  <button onclick="showTab(&#39;payroll&#39;)">급여 계산</button>
+  <button onclick="showTab(&#39;history&#39;)">월별 내역</button>
+  <button onclick="showTab(&#39;slip&#39;)">급여명세서</button>
+</div>
+<div class="main">
+
+  <!-- 대시보드 -->
+  <div id="tab-dashboard" class="section active">
+    <div class="grid4" id="metrics">
+    <div class="metric"><div class="metric-label">전체 직원</div><div class="metric-value">3명</div></div>
+    <div class="metric"><div class="metric-label">이번 달 총 지급액</div><div class="metric-value">-</div></div>
+    <div class="metric"><div class="metric-label">이번 달 총 실수령</div><div class="metric-value">-</div></div>
+    <div class="metric"><div class="metric-label">급여 확정</div><div class="metric-value">0/3명</div></div></div>
+    <div class="card">
+      <div class="card-title">이번 달 급여 현황</div>
+      <table>
+        <thead><tr><th>직원명</th><th>부서</th><th>기본급</th><th>총 지급액</th><th>실수령액</th><th>상태</th></tr></thead>
+        <tbody id="dashboard-table"><tr><td><strong>김민준</strong></td><td>개발팀</td><td>4,000,000원</td><td>4,500,000원</td><td>3,404,277원</td><td><span class="badge badge-amber">대기</span></td></tr><tr><td><strong>이서연</strong></td><td>영업팀</td><td>3,200,000원</td><td>3,400,000원</td><td>2,698,121원</td><td><span class="badge badge-amber">대기</span></td></tr><tr><td><strong>박지호</strong></td><td>인사팀</td><td>2,800,000원</td><td>3,000,000원</td><td>2,441,338원</td><td><span class="badge badge-amber">대기</span></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 직원 관리 -->
+  <div id="tab-employees" class="section">
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title" id="emp-form-title">직원 등록</div>
+        <div class="form-row">
+          <div><label>이름</label><input type="text" id="emp-name" placeholder="홍길동"></div>
+          <div><label>사번</label><input type="text" id="emp-id" placeholder="EMP001"></div>
+        </div>
+        <div class="form-row">
+          <div><label>부서</label>
+            <select id="emp-dept"><option>개발팀</option><option>영업팀</option><option>인사팀</option><option>재무팀</option><option>마케팅팀</option></select>
+          </div>
+          <div><label>직급</label>
+            <select id="emp-position"><option>사원</option><option>주임</option><option>대리</option><option>과장</option><option>차장</option><option>부장</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div><label>입사일</label><input type="date" id="emp-joindate"></div>
+          <div><label>고용형태</label>
+            <select id="emp-type"><option>정규직</option><option>계약직</option><option>파트타임</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div><label>기본급 (원)</label><input type="number" id="emp-base" placeholder="3000000" min="0"></div>
+          <div><label>직책수당 (원)</label><input type="number" id="emp-allowance" placeholder="0" min="0"></div>
+        </div>
+        <div class="form-row">
+          <div><label>식대 (원)</label><input type="number" id="emp-meal" value="100000" min="0"></div>
+          <div><label>교통비 (원)</label><input type="number" id="emp-transport" value="100000" min="0"></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="saveEmployee()" id="save-btn">등록</button>
+          <button class="btn" onclick="clearForm()">초기화</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">직원 목록</div>
+        <table>
+          <thead><tr><th>이름</th><th>부서</th><th>직급</th><th>기본급</th><th>관리</th></tr></thead>
+          <tbody id="emp-table"><tr><td><strong>김민준</strong></td><td>개발팀</td><td>과장</td><td>4,000,000원</td><td><button class="btn btn-sm" onclick="editEmployee(&#39;EMP001&#39;)">수정</button> <button class="btn btn-sm btn-danger" onclick="deleteEmployee(&#39;EMP001&#39;)">삭제</button></td></tr><tr><td><strong>이서연</strong></td><td>영업팀</td><td>대리</td><td>3,200,000원</td><td><button class="btn btn-sm" onclick="editEmployee(&#39;EMP002&#39;)">수정</button> <button class="btn btn-sm btn-danger" onclick="deleteEmployee(&#39;EMP002&#39;)">삭제</button></td></tr><tr><td><strong>박지호</strong></td><td>인사팀</td><td>주임</td><td>2,800,000원</td><td><button class="btn btn-sm" onclick="editEmployee(&#39;EMP003&#39;)">수정</button> <button class="btn btn-sm btn-danger" onclick="deleteEmployee(&#39;EMP003&#39;)">삭제</button></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 급여 계산 -->
+  <div id="tab-payroll" class="section">
+    <div class="card">
+      <div class="card-title">급여 계산</div>
+      <div class="form-row" style="align-items:end">
+        <div><label>직원 선택</label><select id="calc-emp" onchange="loadEmployeeForCalc()"><option value="EMP001">김민준 (개발팀)</option><option value="EMP002">이서연 (영업팀)</option><option value="EMP003">박지호 (인사팀)</option></select></div>
+        <div><label>귀속 연월</label><input type="month" id="calc-month"></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title">지급 항목</div>
+        <div class="slip-row"><span>기본급</span><span id="c-base">-</span></div>
+        <div class="slip-row"><span>직책수당</span><span id="c-allowance">-</span></div>
+        <div class="slip-row"><span>식대</span><span id="c-meal">-</span></div>
+        <div class="slip-row"><span>교통비</span><span id="c-transport">-</span></div>
+        <div style="margin-top:12px"><label>초과근무시간</label><input type="number" id="c-overtime-h" placeholder="0" min="0" oninput="recalc()"></div>
+        <div class="slip-row"><span>초과근무수당</span><span id="c-overtime">0원</span></div>
+        <div style="margin-top:8px"><label>상여금</label><input type="number" id="c-bonus" placeholder="0" min="0" oninput="recalc()"></div>
+        <hr class="divider">
+        <div class="slip-total"><span>총 지급액</span><span id="c-gross">-</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">공제 항목</div>
+        <div class="alert-info">국민연금 4.5% · 건강보험 3.545% · 장기요양 0.4591% · 고용보험 0.9% · 소득세 간이세액표 적용</div>
+        <div class="slip-row"><span>국민연금</span><input type="number" id="d-pension" style="width:130px;text-align:right;margin-bottom:0;padding:4px 8px;font-size:13px" oninput="updateTotals()"></div>
+        <div class="slip-row"><span>건강보험</span><input type="number" id="d-health" style="width:130px;text-align:right;margin-bottom:0;padding:4px 8px;font-size:13px" oninput="updateTotals()"></div>
+        <div class="slip-row"><span>장기요양보험</span><input type="number" id="d-care" style="width:130px;text-align:right;margin-bottom:0;padding:4px 8px;font-size:13px" oninput="updateTotals()"></div>
+        <div class="slip-row"><span>고용보험</span><input type="number" id="d-employment" style="width:130px;text-align:right;margin-bottom:0;padding:4px 8px;font-size:13px" oninput="updateTotals()"></div>
+        <div class="slip-row"><span>소득세</span><input type="number" id="d-income" style="width:130px;text-align:right;margin-bottom:0;padding:4px 8px;font-size:13px" oninput="updateTotals()"></div>
+        <div class="slip-row"><span>지방소득세</span><input type="number" id="d-local" style="width:130px;text-align:right;margin-bottom:0;padding:4px 8px;font-size:13px" oninput="updateTotals()"></div>
+        <div style="font-size:11px;color:#888;margin:4px 0 8px;text-align:right;">※ 금액 직접 수정 가능</div>
+        <hr class="divider">
+        <div class="slip-total"><span>총 공제액</span><span id="c-total-deduct">-</span></div>
+        <div class="net-box"><div class="label">실수령액</div><div class="value" id="c-net">-</div></div>
+        <button class="btn btn-primary" style="width:100%;margin-top:12px" onclick="savePayroll()">💾 급여 확정 저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 월별 내역 -->
+  <div id="tab-history" class="section">
+    <div class="card">
+      <div class="form-row" style="margin-bottom:0">
+        <div><label>조회 연월</label><input type="month" id="hist-month" oninput="renderHistory()"></div>
+        <div><label>부서</label>
+          <select id="hist-dept" oninput="renderHistory()">
+            <option value="">전체</option><option>개발팀</option><option>영업팀</option><option>인사팀</option><option>재무팀</option><option>마케팅팀</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="grid4" id="hist-metrics" style="display:none"></div>
+    <div class="card">
+      <div class="card-title">급여 내역</div>
+      <table>
+        <thead><tr><th>이름</th><th>부서</th><th>지급 연월</th><th>총 지급액</th><th>공제액</th><th>실수령액</th><th>명세서</th></tr></thead>
+        <tbody id="hist-table"></tbody>
+      </table>
+      <div id="hist-empty" class="empty-state" style="display:none">해당 기간의 급여 내역이 없습니다.</div>
+    </div>
+  </div>
+
+  <!-- 급여명세서 -->
+  <div id="tab-slip" class="section">
+    <div class="card" style="margin-bottom:16px">
+      <div class="form-row" style="align-items:end;margin-bottom:0">
+        <div><label>직원 선택</label><select id="slip-emp-sel" style="margin-bottom:0"><option value="EMP001">김민준 (개발팀)</option><option value="EMP002">이서연 (영업팀)</option><option value="EMP003">박지호 (인사팀)</option></select></div>
+        <div><label>귀속 연월</label><input type="month" id="slip-month-sel" style="margin-bottom:0"></div>
+        <div style="padding-top:16px"><button class="btn btn-primary" onclick="viewSlip()">명세서 조회</button></div>
+      </div>
+    </div>
+    <div id="slip-output"><div class="empty-state">직원과 귀속 연월을 선택 후 명세서를 조회하세요.</div></div>
+  </div>
+
+</div>
+
+<script>
+let employees=[
+  {id:'EMP001',name:'김민준',dept:'개발팀',position:'과장',joindate:'2020-03-01',type:'정규직',base:4000000,allowance:300000,meal:100000,transport:100000},
+  {id:'EMP002',name:'이서연',dept:'영업팀',position:'대리',joindate:'2021-07-15',type:'정규직',base:3200000,allowance:0,meal:100000,transport:100000},
+  {id:'EMP003',name:'박지호',dept:'인사팀',position:'주임',joindate:'2022-01-10',type:'정규직',base:2800000,allowance:0,meal:100000,transport:100000},
+];
+let payrollRecords=[];
+let editingEmpId=null;
+
+function fmt(n){return Math.round(n).toLocaleString('ko-KR')+'원';}
+
+function calcDeductions(gross){
+  const pension=Math.round(gross*0.045);
+  const health=Math.round(gross*0.03545);
+  const care=Math.round(health*0.1295);
+  const employment=Math.round(gross*0.009);
+  let income=0;
+  if(gross<=1060000)income=0;
+  else if(gross<=1500000)income=Math.round((gross-1060000)*0.06);
+  else if(gross<=3000000)income=Math.round(26400+(gross-1500000)*0.15);
+  else if(gross<=4500000)income=Math.round(251400+(gross-3000000)*0.24);
+  else income=Math.round(611400+(gross-4500000)*0.35);
+  const local=Math.round(income*0.1);
+  const total=pension+health+care+employment+income+local;
+  return{pension,health,care,employment,income,local,total};
+}
+
+function calcGross(emp,overtime=0,bonus=0){
+  const hourlyRate=Math.round(emp.base/209);
+  const overtimePay=Math.round(hourlyRate*1.5*overtime);
+  const gross=emp.base+(emp.allowance||0)+(emp.meal||0)+(emp.transport||0)+overtimePay+(parseInt(bonus)||0);
+  return{gross,overtimePay};
+}
+
+function renderMetrics(){
+  const now=new Date();
+  const m=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const rec=payrollRecords.filter(r=>r.month===m);
+  const tG=rec.reduce((s,r)=>s+r.gross,0);
+  const tN=rec.reduce((s,r)=>s+r.net,0);
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">전체 직원</div><div class="metric-value">${employees.length}명</div></div>
+    <div class="metric"><div class="metric-label">이번 달 총 지급액</div><div class="metric-value">${tG>0?Math.round(tG/10000).toLocaleString()+'만원':'-'}</div></div>
+    <div class="metric"><div class="metric-label">이번 달 총 실수령</div><div class="metric-value">${tN>0?Math.round(tN/10000).toLocaleString()+'만원':'-'}</div></div>
+    <div class="metric"><div class="metric-label">급여 확정</div><div class="metric-value">${rec.length}/${employees.length}명</div></div>`;
+}
+
+function renderDashboardTable(){
+  const now=new Date();
+  const m=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const rows=employees.map(emp=>{
+    const rec=payrollRecords.find(r=>r.empId===emp.id&&r.month===m);
+    const{gross}=calcGross(emp);
+    const d=calcDeductions(gross);
+    return`<tr><td><strong>${emp.name}</strong></td><td>${emp.dept}</td><td>${fmt(emp.base)}</td><td>${fmt(gross)}</td><td>${fmt(gross-d.total)}</td><td>${rec?'<span class="badge badge-green">확정</span>':'<span class="badge badge-amber">대기</span>'}</td></tr>`;
+  }).join('');
+  document.getElementById('dashboard-table').innerHTML=rows||'<tr><td colspan="6" class="empty-state">등록된 직원이 없습니다.</td></tr>';
+}
+
+function renderEmpTable(){
+  const rows=employees.map(emp=>`<tr><td><strong>${emp.name}</strong></td><td>${emp.dept}</td><td>${emp.position}</td><td>${fmt(emp.base)}</td><td><button class="btn btn-sm" onclick="editEmployee('${emp.id}')">수정</button> <button class="btn btn-sm btn-danger" onclick="deleteEmployee('${emp.id}')">삭제</button></td></tr>`).join('');
+  document.getElementById('emp-table').innerHTML=rows||'<tr><td colspan="5" class="empty-state">직원을 등록해주세요.</td></tr>';
+}
+
+function updateSelects(){
+  const opts=employees.map(e=>`<option value="${e.id}">${e.name} (${e.dept})</option>`).join('');
+  document.getElementById('calc-emp').innerHTML=opts;
+  document.getElementById('slip-emp-sel').innerHTML=opts;
+}
+
+function saveEmployee(){
+  const name=document.getElementById('emp-name').value.trim();
+  const id=document.getElementById('emp-id').value.trim();
+  if(!name||!id){alert('이름과 사번을 입력해주세요.');return;}
+  const emp={id,name,dept:document.getElementById('emp-dept').value,position:document.getElementById('emp-position').value,joindate:document.getElementById('emp-joindate').value,type:document.getElementById('emp-type').value,base:parseInt(document.getElementById('emp-base').value)||0,allowance:parseInt(document.getElementById('emp-allowance').value)||0,meal:parseInt(document.getElementById('emp-meal').value)||0,transport:parseInt(document.getElementById('emp-transport').value)||0};
+  if(editingEmpId){
+    const idx=employees.findIndex(e=>e.id===editingEmpId);
+    if(idx!==-1)employees[idx]=emp;
+    editingEmpId=null;
+    document.getElementById('emp-form-title').textContent='직원 등록';
+    document.getElementById('save-btn').textContent='등록';
+  }else{
+    if(employees.find(e=>e.id===id)){alert('이미 존재하는 사번입니다.');return;}
+    employees.push(emp);
+  }
+  clearForm();renderEmpTable();updateSelects();renderDashboardTable();renderMetrics();
+}
+
+function editEmployee(id){
+  const emp=employees.find(e=>e.id===id);if(!emp)return;
+  editingEmpId=id;
+  document.getElementById('emp-name').value=emp.name;
+  document.getElementById('emp-id').value=emp.id;
+  document.getElementById('emp-dept').value=emp.dept;
+  document.getElementById('emp-position').value=emp.position;
+  document.getElementById('emp-joindate').value=emp.joindate;
+  document.getElementById('emp-type').value=emp.type;
+  document.getElementById('emp-base').value=emp.base;
+  document.getElementById('emp-allowance').value=emp.allowance;
+  document.getElementById('emp-meal').value=emp.meal;
+  document.getElementById('emp-transport').value=emp.transport;
+  document.getElementById('emp-form-title').textContent='직원 수정';
+  document.getElementById('save-btn').textContent='수정';
+  showTab('employees');
+}
+
+function deleteEmployee(id){
+  if(!confirm('해당 직원을 삭제하시겠습니까?'))return;
+  employees=employees.filter(e=>e.id!==id);
+  renderEmpTable();updateSelects();renderDashboardTable();renderMetrics();
+}
+
+function clearForm(){
+  ['emp-name','emp-id','emp-base','emp-allowance'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('emp-meal').value=100000;
+  document.getElementById('emp-transport').value=100000;
+  document.getElementById('emp-joindate').value=new Date().toISOString().split('T')[0];
+  editingEmpId=null;
+  document.getElementById('emp-form-title').textContent='직원 등록';
+  document.getElementById('save-btn').textContent='등록';
+}
+
+function loadEmployeeForCalc(){
+  const id=document.getElementById('calc-emp').value;
+  const emp=employees.find(e=>e.id===id);if(!emp)return;
+  document.getElementById('c-base').textContent=fmt(emp.base);
+  document.getElementById('c-allowance').textContent=fmt(emp.allowance);
+  document.getElementById('c-meal').textContent=fmt(emp.meal);
+  document.getElementById('c-transport').textContent=fmt(emp.transport);
+  document.getElementById('c-overtime-h').value='';
+  document.getElementById('c-bonus').value='';
+  recalc();
+}
+
+function updateTotals(){
+  const pension=parseInt(document.getElementById('d-pension').value)||0;
+  const health=parseInt(document.getElementById('d-health').value)||0;
+  const care=parseInt(document.getElementById('d-care').value)||0;
+  const employment=parseInt(document.getElementById('d-employment').value)||0;
+  const income=parseInt(document.getElementById('d-income').value)||0;
+  const local=parseInt(document.getElementById('d-local').value)||0;
+  const total=pension+health+care+employment+income+local;
+  const grossEl=document.getElementById('c-gross');
+  const grossText=grossEl.textContent.replace(/[^0-9]/g,'');
+  const gross=parseInt(grossText)||0;
+  document.getElementById('c-total-deduct').textContent=fmt(total);
+  document.getElementById('c-net').textContent=fmt(gross-total);
+}
+
+function recalc(){
+  const id=document.getElementById('calc-emp').value;
+  const emp=employees.find(e=>e.id===id);if(!emp)return;
+  const oth=parseInt(document.getElementById('c-overtime-h').value)||0;
+  const bonus=parseInt(document.getElementById('c-bonus').value)||0;
+  const{gross,overtimePay}=calcGross(emp,oth,bonus);
+  document.getElementById('c-overtime').textContent=fmt(overtimePay);
+  document.getElementById('c-gross').textContent=fmt(gross);
+  const d=calcDeductions(gross);
+  document.getElementById('d-pension').value=Math.round(d.pension);
+  document.getElementById('d-health').value=Math.round(d.health);
+  document.getElementById('d-care').value=Math.round(d.care);
+  document.getElementById('d-employment').value=Math.round(d.employment);
+  document.getElementById('d-income').value=Math.round(d.income);
+  document.getElementById('d-local').value=Math.round(d.local);
+  updateTotals();
+
+}
+
+function savePayroll(){
+  const id=document.getElementById('calc-emp').value;
+  const month=document.getElementById('calc-month').value;
+  const emp=employees.find(e=>e.id===id);
+  if(!emp||!month){alert('직원과 귀속 연월을 선택해주세요.');return;}
+  const oth=parseInt(document.getElementById('c-overtime-h').value)||0;
+  const bonus=parseInt(document.getElementById('c-bonus').value)||0;
+  const{gross,overtimePay}=calcGross(emp,oth,bonus);
+  const pension=parseInt(document.getElementById('d-pension').value)||0;
+  const health=parseInt(document.getElementById('d-health').value)||0;
+  const care=parseInt(document.getElementById('d-care').value)||0;
+  const employment=parseInt(document.getElementById('d-employment').value)||0;
+  const income=parseInt(document.getElementById('d-income').value)||0;
+  const local=parseInt(document.getElementById('d-local').value)||0;
+  const totalDeduct=pension+health+care+employment+income+local;
+  const d={pension,health,care,employment,income,local,total:totalDeduct};
+  const rec={empId:id,empName:emp.name,dept:emp.dept,month,base:emp.base,allowance:emp.allowance,meal:emp.meal,transport:emp.transport,overtimePay,bonus,gross,deductions:d,net:gross-totalDeduct};
+  const idx=payrollRecords.findIndex(r=>r.empId===id&&r.month===month);
+  if(idx!==-1)payrollRecords[idx]=rec;else payrollRecords.push(rec);
+  alert(`${emp.name} (${month}) 급여가 확정 저장되었습니다.`);
+  renderDashboardTable();renderMetrics();renderHistory();
+}
+
+function renderHistory(){
+  const month=document.getElementById('hist-month').value;
+  const dept=document.getElementById('hist-dept').value;
+  let records=payrollRecords;
+  if(month)records=records.filter(r=>r.month===month);
+  if(dept)records=records.filter(r=>r.dept===dept);
+  const tbody=document.getElementById('hist-table');
+  const empty=document.getElementById('hist-empty');
+  const hm=document.getElementById('hist-metrics');
+  if(records.length===0){tbody.innerHTML='';empty.style.display='block';hm.style.display='none';return;}
+  empty.style.display='none';
+  tbody.innerHTML=records.map(r=>`<tr><td><strong>${r.empName}</strong></td><td>${r.dept}</td><td>${r.month}</td><td>${fmt(r.gross)}</td><td>${fmt(r.deductions.total)}</td><td><strong>${fmt(r.net)}</strong></td><td><button class="btn btn-sm" onclick="showSlip('${r.empId}','${r.month}')">보기</button></td></tr>`).join('');
+  const tG=records.reduce((s,r)=>s+r.gross,0);
+  const tN=records.reduce((s,r)=>s+r.net,0);
+  const tD=records.reduce((s,r)=>s+r.deductions.total,0);
+  hm.style.display='grid';
+  hm.innerHTML=`
+    <div class="metric"><div class="metric-label">대상 인원</div><div class="metric-value">${records.length}명</div></div>
+    <div class="metric"><div class="metric-label">총 지급액</div><div class="metric-value">${Math.round(tG/10000).toLocaleString()}만원</div></div>
+    <div class="metric"><div class="metric-label">총 공제액</div><div class="metric-value">${Math.round(tD/10000).toLocaleString()}만원</div></div>
+    <div class="metric"><div class="metric-label">총 실수령액</div><div class="metric-value">${Math.round(tN/10000).toLocaleString()}만원</div></div>`;
+}
+
+function showSlip(empId,month){
+  document.getElementById('slip-emp-sel').value=empId;
+  document.getElementById('slip-month-sel').value=month;
+  viewSlip();showTab('slip');
+}
+
+function viewSlip(){
+  const empId=document.getElementById('slip-emp-sel').value;
+  const month=document.getElementById('slip-month-sel').value;
+  const r=payrollRecords.find(r=>r.empId===empId&&r.month===month);
+  const emp=employees.find(e=>e.id===empId);
+  if(!r||!emp){document.getElementById('slip-output').innerHTML='<div class="empty-state">해당 월의 확정된 급여 내역이 없습니다.</div>';return;}
+  const d=r.deductions;
+  document.getElementById('slip-output').innerHTML=`
+    <div class="slip-paper">
+      <div class="slip-header">
+        <h2>${r.month} 급여명세서</h2>
+        <p>${emp.dept} · ${emp.position} · ${emp.name}</p>
+      </div>
+      <div class="slip-body">
+        <div class="slip-section-title">지급 항목</div>
+        <div class="slip-row"><span>기본급</span><span>${fmt(r.base)}</span></div>
+        <div class="slip-row"><span>직책수당</span><span>${fmt(r.allowance)}</span></div>
+        <div class="slip-row"><span>식대</span><span>${fmt(r.meal)}</span></div>
+        <div class="slip-row"><span>교통비</span><span>${fmt(r.transport)}</span></div>
+        ${r.overtimePay>0?`<div class="slip-row"><span>초과근무수당</span><span>${fmt(r.overtimePay)}</span></div>`:''}
+        ${r.bonus>0?`<div class="slip-row"><span>상여금</span><span>${fmt(r.bonus)}</span></div>`:''}
+        <div class="slip-total"><span>총 지급액</span><span>${fmt(r.gross)}</span></div>
+        <div class="slip-section-title">공제 항목</div>
+        <div class="slip-row"><span>국민연금</span><span>${fmt(d.pension)}</span></div>
+        <div class="slip-row"><span>건강보험</span><span>${fmt(d.health)}</span></div>
+        <div class="slip-row"><span>장기요양보험</span><span>${fmt(d.care)}</span></div>
+        <div class="slip-row"><span>고용보험</span><span>${fmt(d.employment)}</span></div>
+        <div class="slip-row"><span>소득세</span><span>${fmt(d.income)}</span></div>
+        <div class="slip-row"><span>지방소득세</span><span>${fmt(d.local)}</span></div>
+        <div class="slip-total"><span>총 공제액</span><span>${fmt(d.total)}</span></div>
+        <div class="net-box" style="margin-top:16px"><div class="label">실수령액</div><div class="value">${fmt(r.net)}</div></div>
+        <div style="text-align:center;margin-top:16px">
+          <button class="btn" onclick="window.print()">🖨️ 인쇄</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function showTab(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  const tabs=['dashboard','employees','payroll','history','slip'];
+  document.querySelectorAll('.nav button')[tabs.indexOf(name)].classList.add('active');
+  if(name==='payroll')loadEmployeeForCalc();
+  if(name==='history')renderHistory();
+}
+
+const now=new Date();
+const m=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+document.getElementById('calc-month').value=m;
+document.getElementById('hist-month').value=m;
+document.getElementById('slip-month-sel').value=m;
+document.getElementById('emp-joindate').value=now.toISOString().split('T')[0];
+document.getElementById('today-date').textContent=now.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+updateSelects();renderEmpTable();renderDashboardTable();renderMetrics();
+</script>
+
+
+</body></html>
